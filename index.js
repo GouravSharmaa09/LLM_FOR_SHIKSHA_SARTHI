@@ -1,17 +1,16 @@
-// Zaroori packages ko import kiya
-require('dotenv').config(); // .env file se secret keys load karne ke liye
+
+require('dotenv').config(); 
 const express = require('express');
 const axios = require('axios');
 
-// Express app ko initialize kiya
-const app = express();
-app.use(express.json()); // JSON requests ko samajhne ke liye
 
-// OpenRouter ki API key ko .env file se liya
+const app = express();
+app.use(express.json()); 
+
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-// --- YAHI HAI ASLI FIX ---
-// Humne model list ko naye, reliable free models se update kar diya hai
+
+// model list ko reliable se connect kiya taki switch kre
 const freeModels = [
     'mistralai/mistral-7b-instruct:free',
     'nousresearch/nous-hermes-2-mixtral-8x7b-dpo:free',
@@ -19,17 +18,17 @@ const freeModels = [
     'google/gemma-7b-it:free',
 ];
 
-// Main API endpoint
+
 app.post('/api/generate', async (req, res) => {
-    // User se aayi hui jaankari ko liya
+   
     const { classLevel, subject, board, language, userPrompt } = req.body;
 
-    // Agar zaroori jaankari nahi aayi, toh error bheja
+
     if (!userPrompt || !classLevel || !subject || !board || !language) {
         return res.status(400).json({ error: "Missing required fields in request." });
     }
 
-    // AI ke liye detailed "Instructions" banaye
+    // AI ke liye detailed "Instructions" banayega
     const fullPrompt = `
       You are 'ShikshaSarathi AI', an expert teaching assistant for teachers in India.
       A teacher has provided the following context:
@@ -43,7 +42,7 @@ app.post('/api/generate', async (req, res) => {
       THEIR REQUEST IS: "${userPrompt}"
     `;
 
-    // Ek-ek karke har free model ko try karenge
+    // Ek-ek karke har free model ko try kara
     for (const model of freeModels) {
         try {
             console.log(`Trying model: ${model}`);
